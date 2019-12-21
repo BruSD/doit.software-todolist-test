@@ -8,13 +8,13 @@ class UserRepository {
   Future<UserModel> signIn(login, password) async {
     Map<String, dynamic> response = await service.signIn(login, password);
 
-    if (response['success'] == true) {
+    if (response != null) {
       return new UserModel(
         sessionID: response['token'],
         userName: login,
       );
     } else {
-      error = response['error'];
+      error = response.toString();
       return null;
     }
   }

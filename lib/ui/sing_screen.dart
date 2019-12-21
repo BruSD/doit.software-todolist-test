@@ -17,7 +17,7 @@ class _SignScreenState extends State<SignScreen> {
   final _formKey = GlobalKey<FormState>();
   GlobalKey _scaffold = GlobalKey();
 
-  bool isSignUp = true;
+  bool isSignUp = false;
 
   @override
   Widget build(BuildContext context) {
