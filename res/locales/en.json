@@ -1,0 +1,14 @@
+{
+  "app_name": "TODO Special for DOIT.SOFTWARE",
+
+  "alert_email": "Please Enter Email",
+  "alert_password": "Please Enter Password",
+  "user_name": "Email",
+  "password": "Password",
+  "repeat_password": "Repeat Password",
+
+  "sign_in": "Sign In",
+  "sign_up": "Sign Up",
+
+  "upss_passwords": "Looks Like Passwords not match :( "
+}
