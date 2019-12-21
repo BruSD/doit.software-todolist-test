@@ -3,12 +3,31 @@
 
   "alert_email": "Please Enter Email",
   "alert_password": "Please Enter Password",
+  "alert_title_required": "Title Required",
+
   "user_name": "Email",
   "password": "Password",
   "repeat_password": "Repeat Password",
-
   "sign_in": "Sign In",
   "sign_up": "Sign Up",
+  "upss_passwords": "Looks Like Passwords not match :( ",
 
-  "upss_passwords": "Looks Like Passwords not match :( "
+
+  "create_new_task": "Create new Task",
+  "view_task": "Task Detail",
+  "edit_task": "Edit Task",
+
+  "save_task": "Save",
+  "cancel": "Cancel",
+  "create_task": "Create",
+  "delete_task": "Delete",
+
+  "title_label": "Title",
+  "priority_label": "Priority",
+  "desc_label": "Description",
+
+  "priority_low": "Low",
+  "priority_medium": "Medium",
+  "priority_high": "High"
+
 }
