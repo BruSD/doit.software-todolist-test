@@ -21,4 +21,32 @@ class TaskService {
       return null;
     }
   }
+
+  Future<dynamic> delete(int id) async {
+    var response = await Requests.delete(TASKS_URL + '/' + id.toString(),
+        headers: {'Authorization': 'Bearer ' + await Prefs.getUserSessionID()},
+        bodyEncoding: RequestBodyEncoding.FormURLEncoded);
+    debugPrint(response.content());
+
+    if (response.statusCode == 202) {
+      debugPrint('Add Task responce ' + response.content().toString());
+      return json.decode(response.content());
+    } else {
+      return null;
+    }
+  }
+
+  Future<dynamic> getAllTasks() async {
+    var response = await Requests.get(TASKS_URL,
+        headers: {'Authorization': 'Bearer ' + await Prefs.getUserSessionID()},
+        bodyEncoding: RequestBodyEncoding.FormURLEncoded);
+    debugPrint(response.content());
+
+    if (response.statusCode == 200) {
+      debugPrint('Add Task responce ' + response.content().toString());
+      return json.decode(response.content())['tasks'];
+    } else {
+      return null;
+    }
+  }
 }

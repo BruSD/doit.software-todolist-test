@@ -16,14 +16,16 @@ class TaskProvider with ChangeNotifier {
 
   get currentTask => _currentTask;
 
-  init() {}
+  init() {
+    loadTasks();
+  }
 
-  Future<List<TaskModel>> loadTasks() {
+  Future<List<TaskModel>> loadTasks() async {
     _isLoadTasks = true;
-    Future.delayed(const Duration(milliseconds: 2500), () {
-      _isLoadTasks = false;
-      notifyListeners();
-    });
+    _tasks = await _repository.getAllTasks();
+
+    _isLoadTasks = false;
+    notifyListeners();
   }
 
   Future<TaskModel> addNewTask(String title, String description,
@@ -34,9 +36,30 @@ class TaskProvider with ChangeNotifier {
     TaskModel newTask =
         await _repository.addNewTask(title, description, priority, dueBy);
     _tasks.add(newTask);
-
+    _currentTask = newTask;
     isTaskInProgress = false;
     notifyListeners();
     return newTask;
+  }
+
+  Future<TaskModel> updateTask() async {
+    //TODO
+  }
+
+  Future<TaskModel> deleteTask(int id) async {
+    isTaskInProgress = true;
+    notifyListeners();
+
+    remuveCurrentTask();
+    await _repository.deleteTask(id);
+    isTaskInProgress = false;
+  }
+
+  void selectTaskToView(index) {
+    _currentTask = _tasks[index];
+  }
+
+  void remuveCurrentTask(){
+    _currentTask = null;
   }
 }

@@ -28,6 +28,8 @@
 
   "priority_low": "Low",
   "priority_medium": "Medium",
-  "priority_high": "High"
+  "priority_high": "High",
 
+
+  "now_tasks_for_now": "Hey Lazy man you need to do something, Press + and create some task for your self "
 }

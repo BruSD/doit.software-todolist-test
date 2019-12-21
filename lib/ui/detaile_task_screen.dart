@@ -25,15 +25,13 @@ class _DetailTaskScreenState extends State<DetailTaskScreen> {
     // TODO: implement initState
     super.initState();
     final taskProvider = Provider.of<TaskProvider>(context, listen: false);
-
-    if (mounted) {
-      if (taskProvider.currentTask == null) {
-        isCreateNewTask = true;
-        isEditMode = true;
-      } else {
-        isCreateNewTask = false;
-        isEditMode = false;
-      }
+    taskProvider.isTaskInProgress = false;
+    if (taskProvider.currentTask == null) {
+      isCreateNewTask = true;
+      isEditMode = true;
+    } else {
+      isCreateNewTask = false;
+      isEditMode = false;
     }
   }
 
@@ -63,7 +61,7 @@ class _DetailTaskScreenState extends State<DetailTaskScreen> {
   }
 
   initializeTitle(BuildContext context) {
-    final taskProvider = Provider.of<TaskProvider>(context, listen: false);
+    final taskProvider = Provider.of<TaskProvider>(context);
     if (title.isEmpty) {
       if (taskProvider.currentTask == null) {
         title = Translator.of(context).text('create_new_task');
@@ -95,15 +93,15 @@ class _DetailTaskScreenState extends State<DetailTaskScreen> {
         ),
         _buildPriority(context),
         _buildChoicePriority(context),
-        Container(
-          margin: EdgeInsets.all(20.0),
-          child: Divider(
-            height: 10,
-            color: Colors.black,
-          ),
-        ),
-        Text(Translator.of(context).text('desc_label')),
-        _buildDescription(context),
+//        Container(
+//          margin: EdgeInsets.all(20.0),
+//          child: Divider(
+//            height: 10,
+//            color: Colors.black,
+//          ),
+//        ),
+//        Text(Translator.of(context).text('desc_label')),
+//        _buildDescription(context),
       ],
     );
   }
@@ -124,7 +122,7 @@ class _DetailTaskScreenState extends State<DetailTaskScreen> {
       children: <Widget>[
         OutlineButton(
           onPressed: () {
-            setCurrentPriority(context, Priority.LOW);
+            if (isEditMode) setCurrentPriority(context, Priority.LOW);
           },
           hoverColor: Colors.orange,
           shape: StadiumBorder(),
@@ -136,7 +134,7 @@ class _DetailTaskScreenState extends State<DetailTaskScreen> {
         ),
         OutlineButton(
           onPressed: () {
-            setCurrentPriority(context, Priority.MEDIUM);
+            if (isEditMode) setCurrentPriority(context, Priority.MEDIUM);
           },
           shape: StadiumBorder(),
           borderSide: BorderSide(
@@ -148,7 +146,7 @@ class _DetailTaskScreenState extends State<DetailTaskScreen> {
         ),
         OutlineButton(
           onPressed: () {
-            setCurrentPriority(context, Priority.HIGH);
+            if (isEditMode) setCurrentPriority(context, Priority.HIGH);
           },
           shape: StadiumBorder(),
           borderSide: BorderSide(
@@ -185,9 +183,13 @@ class _DetailTaskScreenState extends State<DetailTaskScreen> {
 
     if (isCreateNewTask) {
       return FlatButton(
-        onPressed: () {
-          taskProvider.addNewTask(
+        onPressed: () async {
+          await taskProvider.addNewTask(
               _title.text, _description.text, currentPriority, DateTime.now());
+
+          isCreateNewTask = false;
+          isEditMode = false;
+          updateTitle(context);
         },
         child: Text(Translator.of(context).text('create_task')),
       );
@@ -196,21 +198,46 @@ class _DetailTaskScreenState extends State<DetailTaskScreen> {
         return Row(
           children: <Widget>[
             FlatButton(
-              onPressed: () {},
+              onPressed: () {
+                isEditMode = false;
+                updateTitle(context);
+              },
               child: Text(Translator.of(context).text('cancel')),
             ),
             FlatButton(
-              onPressed: () {},
+              onPressed: () async {
+                await taskProvider.updateTask();
+                isEditMode = false;
+                updateTitle(context);
+              },
               child: Text(Translator.of(context).text('save_task')),
             )
           ],
         );
       } else {
         return FlatButton(
-          onPressed: () {},
+          onPressed: () async {
+            await taskProvider.deleteTask(taskProvider.currentTask.id);
+            Navigator.pop(context);
+          },
           child: Text(Translator.of(context).text('delete_task')),
         );
       }
     }
+  }
+
+  updateTitle(BuildContext context) {
+    final taskProvider = Provider.of<TaskProvider>(context);
+    if (taskProvider.currentTask == null) {
+      title = Translator.of(context).text('create_new_task');
+    } else {
+      if (isEditMode) {
+        title = Translator.of(context).text('view_task');
+      } else {
+        title = Translator.of(context).text('edit_task');
+      }
+      title = Translator.of(context).text('view_task');
+    }
+    setState(() {});
   }
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:todo_list_for_doit_software/global/constant.dart';
 
 class TaskModel {
@@ -7,7 +8,7 @@ class TaskModel {
   Priority priority;
   String description;
 
-  TaskModel({this.title, this.dueBy, this.priority, this.description});
+  TaskModel({this.id, this.title, this.dueBy, this.priority, this.description});
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'title': this.title,
@@ -15,17 +16,23 @@ class TaskModel {
         'dueBy': toUnix(),
       };
 
-  TaskModel videoFromJson(Map<String, dynamic> json) {
+  TaskModel taskFromJson(Map<String, dynamic> json) {
     return TaskModel(
+      id: json['id'] as int,
       title: json['title'] as String,
-      description: json['description'] as String,
       priority: getEnumFromPriority(json['priority'] as String),
-      dueBy: DateTime.parse(json['dueBy'] as String),
+      dueBy:
+          DateTime.fromMillisecondsSinceEpoch(fromUnix(json['dueBy'] as int)),
     );
   }
 
   int toUnix() {
     return (this.dueBy.millisecondsSinceEpoch / 1000).round();
+  }
+
+  int fromUnix(int unixTime) {
+    debugPrint(unixTime.toString());
+    return unixTime * 1000;
   }
 
   String getPriorityFromEnum() {
