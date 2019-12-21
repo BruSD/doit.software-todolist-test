@@ -12,10 +12,22 @@ class TaskService {
         headers: {'Authorization': 'Bearer ' + await Prefs.getUserSessionID()},
         body: newTask.toJson(),
         bodyEncoding: RequestBodyEncoding.FormURLEncoded);
-    debugPrint(response.content());
 
     if (response.statusCode == 201) {
-      debugPrint('Add Task responce ' + response.content().toString());
+      return json.decode(response.content());
+    } else {
+      return null;
+    }
+  }
+
+  Future<Map<String, dynamic>> updateTask(TaskModel newTask) async {
+    var response = await Requests.put(TASKS_URL + '/' + newTask.id.toString(),
+        headers: {'Authorization': 'Bearer ' + await Prefs.getUserSessionID()},
+        body: newTask.toJson(),
+        bodyEncoding: RequestBodyEncoding.FormURLEncoded);
+
+    debugPrint(response.content());
+    if (response.statusCode == 201) {
       return json.decode(response.content());
     } else {
       return null;
@@ -26,10 +38,8 @@ class TaskService {
     var response = await Requests.delete(TASKS_URL + '/' + id.toString(),
         headers: {'Authorization': 'Bearer ' + await Prefs.getUserSessionID()},
         bodyEncoding: RequestBodyEncoding.FormURLEncoded);
-    debugPrint(response.content());
 
     if (response.statusCode == 202) {
-      debugPrint('Add Task responce ' + response.content().toString());
       return json.decode(response.content());
     } else {
       return null;
@@ -40,13 +50,13 @@ class TaskService {
     var response = await Requests.get(TASKS_URL,
         headers: {'Authorization': 'Bearer ' + await Prefs.getUserSessionID()},
         bodyEncoding: RequestBodyEncoding.FormURLEncoded);
-    debugPrint(response.content());
 
     if (response.statusCode == 200) {
-      debugPrint('Add Task responce ' + response.content().toString());
       return json.decode(response.content())['tasks'];
     } else {
       return null;
     }
   }
+
+
 }

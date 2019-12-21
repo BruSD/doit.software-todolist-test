@@ -86,8 +86,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     } else {
       return taskProvider.tasks.length == 0
           ? Center(
-        child: Text(Translator.of(context).text('now_tasks_for_now')),
-      )
+              child: Text(Translator.of(context).text('now_tasks_for_now')),
+            )
           : _buildListOfTask(context);
     }
   }
@@ -108,22 +108,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildListItem(BuildContext context, int position) {
     final taskProvider = Provider.of<TaskProvider>(context);
     TaskModel taskModel = taskProvider.tasks[position];
-    String formattedDate = DateFormat('MMM-dd – kk:mm').format(
-        taskModel.dueBy);
+    String formattedDate = DateFormat('MMM-dd – kk:mm').format(taskModel.dueBy);
 
     return Card(
-      child: Container(
-        padding: EdgeInsets.all(20.0),
-        child: InkWell(
-          onTap: () {
-            taskProvider.selectTaskToView(position);
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DetailTaskScreen(),
-              ),
-            );
-          },
+      child: InkWell(
+        onTap: () {
+          taskProvider.selectTaskToView(position);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DetailTaskScreen(),
+            ),
+          );
+        },
+        child: Container(
+          padding: EdgeInsets.all(20.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -140,9 +139,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           taskModel.title,
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        Text(
-                          'Due date: ' + formattedDate,
-                        )
+                        Row(
+                          children: <Widget>[
+                            Text(
+                              formattedDate,
+                            ),
+                            FlatButton.icon(
+                                icon: Icon(
+                                  Icons.arrow_upward,
+                                  color: taskModel.getColor(),
+                                ),
+                                label: Text(taskModel.getPriorityFromEnum()))
+                          ],
+                        ),
                       ],
                     ),
                   ),

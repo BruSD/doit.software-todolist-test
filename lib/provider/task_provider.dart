@@ -42,8 +42,16 @@ class TaskProvider with ChangeNotifier {
     return newTask;
   }
 
-  Future<TaskModel> updateTask() async {
-    //TODO
+  Future<TaskModel> updateTask(
+      String title, Priority priority, DateTime dueBy) async {
+    isTaskInProgress = true;
+    notifyListeners();
+    _currentTask.title = title;
+    _currentTask.priority = priority;
+    _currentTask.dueBy = dueBy;
+
+    await _repository.updateTask(_currentTask);
+    isTaskInProgress = false;
   }
 
   Future<TaskModel> deleteTask(int id) async {
@@ -52,14 +60,19 @@ class TaskProvider with ChangeNotifier {
 
     remuveCurrentTask();
     await _repository.deleteTask(id);
+    deleteFromList(id);
     isTaskInProgress = false;
+  }
+
+  deleteFromList(int id) {
+    _tasks = _tasks.where((task) => task.id != id).toList();
   }
 
   void selectTaskToView(index) {
     _currentTask = _tasks[index];
   }
 
-  void remuveCurrentTask(){
+  void remuveCurrentTask() {
     _currentTask = null;
   }
 }

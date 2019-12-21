@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_formfield/flutter_datetime_formfield.dart';
+
 import 'package:provider/provider.dart';
 import 'package:todo_list_for_doit_software/global/constant.dart';
 import 'package:todo_list_for_doit_software/global/translator.dart';
@@ -16,6 +18,7 @@ class _DetailTaskScreenState extends State<DetailTaskScreen> {
   bool isCreateNewTask = false;
   bool isEditMode = false;
   Priority currentPriority = Priority.MEDIUM;
+  DateTime currentDueBy = DateTime.now();
 
   TextEditingController _title = new TextEditingController();
   TextEditingController _description = new TextEditingController();
@@ -30,6 +33,9 @@ class _DetailTaskScreenState extends State<DetailTaskScreen> {
       isCreateNewTask = true;
       isEditMode = true;
     } else {
+      currentPriority = taskProvider.currentTask.priority;
+      currentDueBy = taskProvider.currentTask.dueBy;
+      _title.text = taskProvider.currentTask.title;
       isCreateNewTask = false;
       isEditMode = false;
     }
@@ -43,8 +49,21 @@ class _DetailTaskScreenState extends State<DetailTaskScreen> {
         appBar: AppBar(
           title: Text(title),
           centerTitle: true,
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.edit),
+              onPressed: () {
+                isEditMode = true;
+                setState(() {});
+              },
+            )
+          ],
           leading: InkWell(
               onTap: () {
+                final taskProvider =
+                    Provider.of<TaskProvider>(context, listen: false);
+                taskProvider.remuveCurrentTask();
+
                 Navigator.pop(context);
               },
               child: Icon(Icons.arrow_back_ios)),
@@ -72,12 +91,14 @@ class _DetailTaskScreenState extends State<DetailTaskScreen> {
   }
 
   Widget _buildBody(BuildContext context) {
+    final taskProvider = Provider.of<TaskProvider>(context, listen: false);
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(Translator.of(context).text('title_label')),
         TextFormField(
+//          initialValue:isCreateNewTask? taskProvider.currentTask.title:" " ,
           controller: _title,
           enabled: isEditMode,
           validator: (value) => (value.isEmpty)
@@ -86,22 +107,22 @@ class _DetailTaskScreenState extends State<DetailTaskScreen> {
         ),
         Container(
           margin: EdgeInsets.all(20.0),
-          child: Divider(
-            height: 10,
-            color: Colors.black,
+          child: DateTimeFormField(
+            initialValue: currentDueBy,
+            label: "Date Time",
+            validator: (DateTime dateTime) {
+              if (dateTime == null) {
+                return "Date Time Required";
+              }
+              return null;
+            },
+            onSaved: (DateTime dateTime) {
+              if (isEditMode) currentDueBy = dateTime;
+            },
           ),
         ),
         _buildPriority(context),
         _buildChoicePriority(context),
-//        Container(
-//          margin: EdgeInsets.all(20.0),
-//          child: Divider(
-//            height: 10,
-//            color: Colors.black,
-//          ),
-//        ),
-//        Text(Translator.of(context).text('desc_label')),
-//        _buildDescription(context),
       ],
     );
   }
@@ -166,15 +187,6 @@ class _DetailTaskScreenState extends State<DetailTaskScreen> {
     });
   }
 
-  Widget _buildDescription(BuildContext context) {
-    return TextFormField(
-      enabled: isEditMode,
-      controller: _description,
-      maxLines: 5,
-      minLines: 1,
-    );
-  }
-
   Widget _buildButtons(BuildContext context) {
     final taskProvider = Provider.of<TaskProvider>(context);
     if (taskProvider.isTaskInProgress) {
@@ -206,7 +218,7 @@ class _DetailTaskScreenState extends State<DetailTaskScreen> {
             ),
             FlatButton(
               onPressed: () async {
-                await taskProvider.updateTask();
+                await taskProvider.updateTask(_title.text, currentPriority, currentDueBy);
                 isEditMode = false;
                 updateTitle(context);
               },

@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:todo_list_for_doit_software/global/constant.dart';
 
 class TaskModel {
@@ -31,7 +32,6 @@ class TaskModel {
   }
 
   int fromUnix(int unixTime) {
-    debugPrint(unixTime.toString());
     return unixTime * 1000;
   }
 
@@ -46,7 +46,17 @@ class TaskModel {
         break;
     }
   }
-
+  Color getColor(){
+    switch (priority) {
+      case Priority.LOW:
+        return Colors.yellow;
+      case Priority.MEDIUM:
+        return Colors.green;
+      case Priority.HIGH:
+        return Colors.red;
+        break;
+    }
+  }
   Priority getEnumFromPriority(String string) {
     switch (string) {
       case 'Low':

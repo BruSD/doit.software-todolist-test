@@ -38,4 +38,9 @@ class TaskRepository {
 
     return tasks;
   }
+
+  Future<void> updateTask(TaskModel currentTask)async {
+     await _service.updateTask(currentTask);
+
+  }
 }
