@@ -46,6 +46,17 @@ class TaskModel {
         break;
     }
   }
+  int getPriorityToCompare() {
+    switch (priority) {
+      case Priority.LOW:
+        return 2;
+      case Priority.MEDIUM:
+        return 1;
+      case Priority.HIGH:
+        return 0;
+        break;
+    }
+  }
   Color getColor(){
     switch (priority) {
       case Priority.LOW:

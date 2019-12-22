@@ -108,7 +108,6 @@ class _DetailTaskScreenState extends State<DetailTaskScreen> {
         Container(
           margin: EdgeInsets.all(20.0),
           child: DateTimeFormField(
-            initialValue: currentDueBy,
             label: "Date Time",
             validator: (DateTime dateTime) {
               if (dateTime == null) {
@@ -116,9 +115,8 @@ class _DetailTaskScreenState extends State<DetailTaskScreen> {
               }
               return null;
             },
-            onSaved: (DateTime dateTime) {
-              if (isEditMode) currentDueBy = dateTime;
-            },
+
+              onSaved: (DateTime dateTime) => currentDueBy = dateTime,
           ),
         ),
         _buildPriority(context),
@@ -196,12 +194,14 @@ class _DetailTaskScreenState extends State<DetailTaskScreen> {
     if (isCreateNewTask) {
       return FlatButton(
         onPressed: () async {
-          await taskProvider.addNewTask(
-              _title.text, _description.text, currentPriority, DateTime.now());
+          if (_title.text.isNotEmpty) {
+            await taskProvider.addNewTask(
+                _title.text, _description.text, currentPriority, currentDueBy);
 
-          isCreateNewTask = false;
-          isEditMode = false;
-          updateTitle(context);
+            isCreateNewTask = false;
+            isEditMode = false;
+            updateTitle(context);
+          }
         },
         child: Text(Translator.of(context).text('create_task')),
       );
@@ -218,7 +218,8 @@ class _DetailTaskScreenState extends State<DetailTaskScreen> {
             ),
             FlatButton(
               onPressed: () async {
-                await taskProvider.updateTask(_title.text, currentPriority, currentDueBy);
+                await taskProvider.updateTask(
+                    _title.text, currentPriority, currentDueBy);
                 isEditMode = false;
                 updateTitle(context);
               },

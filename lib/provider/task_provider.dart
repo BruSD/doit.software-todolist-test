@@ -75,4 +75,20 @@ class TaskProvider with ChangeNotifier {
   void remuveCurrentTask() {
     _currentTask = null;
   }
+
+  void sortByName() {
+    _tasks.sort((a, b) => a.title.compareTo(b.title));
+    notifyListeners();
+  }
+
+  void sortByPririty() {
+    _tasks.sort(
+        (a, b) => a.getPriorityToCompare().compareTo(b.getPriorityToCompare()));
+    notifyListeners();
+  }
+
+  void sortByDate() {
+    _tasks.sort((a, b) => a.dueBy.compareTo(b.dueBy));
+    notifyListeners();
+  }
 }

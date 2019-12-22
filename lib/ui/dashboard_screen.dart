@@ -8,6 +8,18 @@ import 'package:todo_list_for_doit_software/provider/task_provider.dart';
 import 'package:todo_list_for_doit_software/provider/user_provider.dart';
 import 'package:todo_list_for_doit_software/ui/detaile_task_screen.dart';
 
+class Constants {
+  static const String FirstItem = 'Sort by Name';
+  static const String SecondItem = 'Sort by Priority';
+  static const String ThirdItem = 'Sort by Date';
+
+  static const List<String> choices = <String>[
+    FirstItem,
+    SecondItem,
+    ThirdItem,
+  ];
+}
+
 class DashboardScreen extends StatefulWidget {
   @override
   _DashboardScreenState createState() => _DashboardScreenState();
@@ -23,6 +35,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
     Provider.of<TaskProvider>(context, listen: false).init();
   }
 
+  void choiceAction(String choice, BuildContext context) {
+    final taskProvider = Provider.of<TaskProvider>(context);
+    if (choice == Constants.FirstItem) {
+      taskProvider.sortByName();
+    } else if (choice == Constants.SecondItem) {
+      taskProvider.sortByPririty();
+    } else if (choice == Constants.ThirdItem) {
+      taskProvider.sortByDate();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -30,15 +53,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
       appBar: AppBar(
         title: Text(Translator.of(context).appName()),
         actions: <Widget>[
-          InkWell(
-            onTap: () {},
-            child: Icon(Icons.sort),
-          ),
-          InkWell(
-            onTap: () {
-              Provider.of<UserProvider>(context).logOut();
+          PopupMenuButton<String>(
+            onSelected: (choice) {
+              choiceAction(choice, context);
             },
-            child: Icon(Icons.cancel),
+            itemBuilder: (BuildContext context) {
+              return Constants.choices.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
+                );
+              }).toList();
+            },
           )
         ],
       ),
@@ -86,8 +112,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     } else {
       return taskProvider.tasks.length == 0
           ? Center(
-              child: Text(Translator.of(context).text('now_tasks_for_now')),
-            )
+        child: Text(Translator.of(context).text('now_tasks_for_now')),
+      )
           : _buildListOfTask(context);
     }
   }

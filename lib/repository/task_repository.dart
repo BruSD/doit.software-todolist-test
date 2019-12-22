@@ -14,6 +14,7 @@ class TaskRepository {
         dueBy: dueBy,
         priority: priority);
     Map<String, dynamic> response = await _service.addNewTask(newTask);
+    debugPrint(response.toString());
     newTask = newTask.taskFromJson(response['task']);
 
     return newTask;
@@ -39,8 +40,7 @@ class TaskRepository {
     return tasks;
   }
 
-  Future<void> updateTask(TaskModel currentTask)async {
-     await _service.updateTask(currentTask);
-
+  Future<void> updateTask(TaskModel currentTask) async {
+    await _service.updateTask(currentTask);
   }
 }
